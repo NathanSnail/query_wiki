@@ -32,13 +32,32 @@ end
 ---@generic U
 ---@param fn fun(key: T): U
 ---@return fun(key: T): U
-function util.single_cached(fn)
+function util.many_cached(fn)
 	local cache = {}
-	return function(arg)
-		if cache[arg] then
-			return cache[arg]
+	return function(...)
+		local args = { ... }
+		local cur_cache = cache
+		for k, v in ipairs(args) do
+			if not cur_cache or not cur_cache[v] then
+				break
+			end
+			if k == #args then
+				return cur_cache[v]
+			end
+			cur_cache = cur_cache[v]
 		end
-		return fn(arg)
+
+		local res = fn(...)
+		cur_cache = cache
+		for k, v in ipairs(args) do
+			cur_cache[v] = cur_cache[v] or {}
+			if k == #args then
+				cur_cache[v] = res
+			else
+				cur_cache = cur_cache[v]
+			end
+		end
+		return res
 	end
 end
 

@@ -14,12 +14,23 @@ local gen = require("generate")("/home/nathan/Documents/code/noitadata/")
 local qm = require("query")
 local builtin = require("builtin")
 builtin(qm, gen)
+
+local cool_files = qm.filter(gen.files, function(el)
+	return string.find(el, "deck")
+end)
+
 print(qm:get("name", "data/entities/animals/longleg.xml"))
 print(qm:get("hp", "data/entities/animals/longleg.xml"))
-print(qm.filter(gen.files, function(el)
+--[[print(qm.filter(cool_files, function(el)
 	local hp = qm:get("hp", el)
 	if hp then
 		return tonumber(hp) > 1 and tonumber(hp) < 1.5
+	end
+end))]]
+print(qm.filter(cool_files, function(el)
+	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
+	if dmg then
+		return tonumber(dmg) > 0
 	end
 end))
 local socket = require("cqueues.socket")
