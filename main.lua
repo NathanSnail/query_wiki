@@ -1,5 +1,6 @@
 require("luarocks.loader")
-local generate = require("generate")
+local generator = require("generate")("/home/nathan/Documents/code/noitadata/")
+print(generator:get_entity_xml("data/entities/animals/longleg.xml"))
 local socket = require("cqueues.socket")
 local http_headers = require("http.headers")
 local sock = socket.listen("127.0.0.1", 8000)

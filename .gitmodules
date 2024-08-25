@@ -1,0 +1,3 @@
+[submodule "luanxml"]
+	path = luanxml
+	url = https://github.com/NathanSnail/luanxml
