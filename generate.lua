@@ -7,6 +7,8 @@ local util = require("util")
 local generator = {
 	---@type string
 	root = "",
+	---@type string[]
+	files = {},
 	---@type table<string, string>
 	file_cache = {},
 	---@type table<string, element>
@@ -17,13 +19,10 @@ local generator = {
 	material_cache = {},
 }
 
---[[---Initialises the generator with the root as fs
-function generator.scan_fs(root)
-	if root:sub(#root) == "/" then
-		root = root:sub(1, #root - 1)
-	end
+---Initialises the generator with the root as fs
+function generator:scan_fs()
 	local files = {}
-	local to_search = { root }
+	local to_search = { self.root }
 	while #to_search ~= 0 do
 		local choice = to_search[#to_search]
 		to_search[#to_search] = nil
@@ -47,9 +46,9 @@ function generator.scan_fs(root)
 		end
 	end
 	for k, v in ipairs(files) do
-		files[k] = v:sub(#root - 3) -- who knows where -3 comes from
+		self.files[k] = v:sub(#self.root)
 	end
-end]]
+end
 
 ---@param path string
 ---@return string
@@ -66,8 +65,11 @@ function generator:get_content(path)
 end
 
 ---@param path string
----@return element
+---@return element?
 function generator:get_xml(path)
+	if path:sub(#path - 3) ~= ".xml" then
+		return nil
+	end
 	local cached = self.xml_cache[path]
 	if cached then
 		return cached
@@ -79,13 +81,14 @@ function generator:get_xml(path)
 end
 
 ---@param path string
----@return element
+---@return element?
 function generator:get_entity_xml(path)
 	local cached = self.entity_cache[path]
 	if cached then
 		return cached
 	end
 	local tree = util.deep_copy(self:get_xml(path))
+	if not tree then return nil end
 	tree:expand_base(function(x)
 		return self:get_content(x)
 	end)
@@ -98,5 +101,6 @@ return function(root)
 		root = root .. "/"
 	end
 	generator.root = root
+	generator:scan_fs()
 	return generator
 end

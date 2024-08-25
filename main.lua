@@ -1,6 +1,27 @@
 require("luarocks.loader")
-local generator = require("generate")("/home/nathan/Documents/code/noitadata/")
-print(generator:get_entity_xml("data/entities/animals/longleg.xml"))
+--TODO: this should allow us to make user queries have a timeout
+if false then
+	local effil = require("effil")
+	local thread = effil.thread(function()
+		for _ = 1, 10000 do
+			print("multithreaded")
+		end
+		return 10
+	end)()
+	print(thread:get(1000, "ms"))
+end
+local gen = require("generate")("/home/nathan/Documents/code/noitadata/")
+local qm = require("query")
+local builtin = require("builtin")
+builtin(qm, gen)
+print(qm:get("name", "data/entities/animals/longleg.xml"))
+print(qm:get("hp", "data/entities/animals/longleg.xml"))
+print(qm.filter(gen.files, function(el)
+	local xml = gen:get_entity_xml(el)
+	if el then
+		return tonumber(el:get("hp")) > 1
+	end
+end))
 local socket = require("cqueues.socket")
 local http_headers = require("http.headers")
 local sock = socket.listen("127.0.0.1", 8000)
@@ -39,4 +60,3 @@ http_server.socket = sock
 local serv = http_server:new()
 serv:listen(1000)
 -- serv:loop()
-print(serv)
