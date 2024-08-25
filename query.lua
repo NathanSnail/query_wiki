@@ -11,7 +11,7 @@ local query_manager = {}
 ---@param col string
 ---@param generator fun(...): T?
 function query_manager:add_col(col, generator)
-	db[col] = util.single_cached(generator)
+	db[col] = util.many_cached(generator)
 end
 
 ---@param col string
