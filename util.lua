@@ -28,10 +28,10 @@ function util.deep_copy(src)
 	return internal_depp_copy(src, {})
 end
 
+---Doesn't cache nils
 ---@generic T
----@generic U
----@param fn fun(key: T): U
----@return fun(key: T): U
+---@param fn fun(...): T
+---@return fun(...): T
 function util.many_cached(fn)
 	local cache = {}
 	return function(...)

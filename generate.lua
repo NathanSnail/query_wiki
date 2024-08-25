@@ -100,7 +100,6 @@ end
 ---@param path string
 ---@return element?
 function generator:get_entity_xml(path)
-	print(path)
 	local cached = self.entity_cache[path]
 	if cached then
 		return cached

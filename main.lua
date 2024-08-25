@@ -1,4 +1,6 @@
 require("luarocks.loader")
+---@class util
+local util = require("util")
 --TODO: this should allow us to make user queries have a timeout
 if false then
 	local effil = require("effil")
@@ -27,6 +29,25 @@ print(qm:get("hp", "data/entities/animals/longleg.xml"))
 		return tonumber(hp) > 1 and tonumber(hp) < 1.5
 	end
 end))]]
+
+local function foobar(a, b, c)
+	return a .. b .. c
+end
+local baz = util.many_cached(foobar)
+baz(1, 2, 3)
+baz(2, 2, 3)
+baz(1, 2, 3)
+baz(2, 2, 3)
+do
+	--return
+end
+
+print(qm.filter(cool_files, function(el)
+	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
+	if dmg then
+		return tonumber(dmg) > 0
+	end
+end))
 print(qm.filter(cool_files, function(el)
 	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
 	if dmg then
