@@ -46,7 +46,7 @@ function generator:scan_fs()
 		end
 	end
 	for k, v in ipairs(files) do
-		self.files[k] = v:sub(#self.root)
+		self.files[k] = v:sub(#self.root + 2)
 	end
 end
 
@@ -57,7 +57,10 @@ function generator:get_content(path)
 	if cached then
 		return cached
 	end
-	local f = assert(io.open(self.root .. path, "r"))
+	local f = io.open(self.root .. path, "r")
+	if not f then
+		return ""
+	end
 	local res = f:read("a")
 	f:close()
 	self.file_cache[path] = res
@@ -75,9 +78,23 @@ function generator:get_xml(path)
 		return cached
 	end
 	local src = self:get_content(path)
-	local res = nxml.parse(src)
+	local success, res = pcall(nxml.parse, src)
+	if not success then
+		return nil
+	end
 	self.xml_cache[path] = res
 	return res
+end
+
+---@param ex_path string
+---@return boolean
+function generator:exists(ex_path)
+	local f = io.open(self.root .. ex_path, "r")
+	if not f then
+		return false
+	end
+	f:close()
+	return true
 end
 
 ---@param path string
@@ -88,9 +105,16 @@ function generator:get_entity_xml(path)
 		return cached
 	end
 	local tree = util.deep_copy(self:get_xml(path))
-	if not tree then return nil end
+	if not tree then
+		return nil
+	end
+	if tree.name ~= "Entity" then
+		return nil
+	end
 	tree:expand_base(function(x)
 		return self:get_content(x)
+	end, function(x)
+		return self:exists(x)
 	end)
 	self.entity_cache[path] = tree
 	return tree

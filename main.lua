@@ -17,9 +17,9 @@ builtin(qm, gen)
 print(qm:get("name", "data/entities/animals/longleg.xml"))
 print(qm:get("hp", "data/entities/animals/longleg.xml"))
 print(qm.filter(gen.files, function(el)
-	local xml = gen:get_entity_xml(el)
-	if el then
-		return tonumber(el:get("hp")) > 1
+	local hp = qm:get("hp", el)
+	if hp then
+		return tonumber(hp) > 1 and tonumber(hp) < 1.5
 	end
 end))
 local socket = require("cqueues.socket")

@@ -36,6 +36,13 @@ local set_funcs = {
 
 local set_mt = {
 	__index = set_funcs,
+	__tostring = function(self)
+		local s = ""
+		for k, v in ipairs(self) do
+			s = s .. v .. (k == #self and "" or ", ")
+		end
+		return s
+	end,
 }
 
 ---@param set set | any[]
