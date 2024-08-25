@@ -2,18 +2,27 @@
 ---@param gen generator
 local function builtin(qm, gen)
 	qm:add_col("name", function(path)
-		return gen:get_entity_xml(path):get("name")
+		local ex = gen:get_entity_xml(path)
+		if ex then
+			return ex:get("name")
+		end
 	end)
 	qm:add_col("dmc", function(path)
-		return gen:get_entity_xml(path):first_of("DamageModelComponent")
+		local ex = gen:get_entity_xml(path)
+		if ex then
+			return ex:first_of("DamageModelComponent")
+		end
 	end)
 	qm:add_col("comp", function(path, comp)
-		return gen:get_entity_xml(path):first_of(comp)
+		local ex = gen:get_entity_xml(path)
+		if ex then
+			return ex:first_of(comp)
+		end
 	end)
 	qm:add_col("field", function(path, comp, field)
-		local c = gen:get_entity_xml(path):first_of(comp)
-		if c then
-			return c:get(field)
+		local ex = qm:get("comp", path, comp)
+		if ex then
+			return ex:get(field)
 		end
 	end)
 	qm:add_col("hp", function(path)
