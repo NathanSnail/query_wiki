@@ -1,5 +1,6 @@
 local lfs = require("lfs")
 local nxml = require("luanxml.nxml")
+nxml.error_handler = function(_, _) end
 ---@type util
 local util = require("util")
 
