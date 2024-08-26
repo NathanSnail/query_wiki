@@ -5,7 +5,7 @@ local util = {}
 ---@param src T
 ---@param cache table<{}, {}>
 ---@return any
-local function internal_depp_copy(src, cache)
+local function internal_deep_copy(src, cache)
 	if type(src) == "table" then
 		if cache[src] then
 			return cache[src]
@@ -14,7 +14,7 @@ local function internal_depp_copy(src, cache)
 		local new = setmetatable({}, mt)
 		cache[src] = new
 		for k, _ in pairs(src) do -- maybe an issue with pairs idk
-			rawset(new, k, internal_depp_copy(rawget(src, k), cache))
+			rawset(new, k, internal_deep_copy(rawget(src, k), cache))
 		end
 		return new
 	end
@@ -25,7 +25,7 @@ end
 ---@param src T
 ---@return T
 function util.deep_copy(src)
-	return internal_depp_copy(src, {})
+	return internal_deep_copy(src, {})
 end
 
 ---Doesn't cache nils

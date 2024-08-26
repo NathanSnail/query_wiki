@@ -1,3 +1,6 @@
 [submodule "luanxml"]
 	path = luanxml
 	url = https://github.com/NathanSnail/luanxml
+[submodule "AutoLuaAPI"]
+	path = AutoLuaAPI
+	url = https://github.com/NathanSnail/AutoLuaAPI/
