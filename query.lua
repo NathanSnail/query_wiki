@@ -1,7 +1,7 @@
 ---@class util
 local util = require("util")
 
----@type table<string, fun(key: ...): any?>
+---@type table<string, fun(...: any): any?>
 local db = {}
 
 ---@class query_manager
@@ -9,12 +9,13 @@ local query_manager = {}
 
 ---@generic T
 ---@param col string
----@param generator fun(...): T?
+---@param generator fun(...: any): T?
 function query_manager:add_col(col, generator)
 	db[col] = util.many_cached(generator)
 end
 
 ---@param col string
+---@param ... any
 ---@return any?
 function query_manager:get(col, ...)
 	return db[col](...)

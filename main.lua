@@ -41,8 +41,7 @@ local function runserver()
 		local req_headers = assert(stream:get_headers())
 		local req_method = req_headers:get(":method")
 
-		-- Log request to stdout
-		io.stdout:write(
+		print(
 			string.format(
 				'[%s] "%s %s HTTP/%g"  "%s" "%s"\n',
 				os.date("%d/%b/%Y:%H:%M:%S %z"),
@@ -53,7 +52,6 @@ local function runserver()
 			)
 		)
 
-		-- Build response headers
 		local res_headers = http_headers.new()
 		res_headers:append(":status", "200")
 		res_headers:append("content-type", "text/plain")

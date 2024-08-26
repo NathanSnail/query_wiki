@@ -52,6 +52,14 @@ function generator:scan_fs()
 	end
 end
 
+function generator:scan_proj()
+	---@type any
+	---@diagnostic disable-next-line: lowercase-global
+	reflecting = true
+	---@diagnostic disable-next-line: lowercase-global
+	reflecting = nil
+end
+
 ---@param path string
 ---@return string
 function generator:get_content(path)
