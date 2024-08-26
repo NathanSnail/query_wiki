@@ -24,36 +24,11 @@ end)
 
 print(qm:get("name", "data/entities/animals/longleg.xml"))
 print(qm:get("hp", "data/entities/animals/longleg.xml"))
---[[print(qm.filter(cool_files, function(el)
-	local hp = qm:get("hp", el)
-	if hp then
-		return tonumber(hp) > 1 and tonumber(hp) < 1.5
-	end
-end))]]
-
-local function foobar(a, b, c)
-	return a .. b .. c
-end
-local baz = util.many_cached(foobar)
-baz(1, 2, 3)
-baz(2, 2, 3)
-baz(1, 2, 3)
-baz(2, 2, 3)
-do
-	--return
-end
 
 print(qm.filter(deck_files, function(el)
 	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
 	if dmg then
 		return tonumber(dmg) > 0
-	end
-end))
-print(qm.filter(deck_files, function(el)
-	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
-	if dmg then
-		dmg = tonumber(dmg)
-		return dmg > 1 and dmg < 10
 	end
 end))
 
@@ -62,7 +37,7 @@ local function runserver()
 	local http_headers = require("http.headers")
 	local sock = socket.listen("127.0.0.1", 8000)
 	local http_server = require("http.server")
-	local onstream = function(self, stream)
+	local onstream = function(_, stream)
 		local req_headers = assert(stream:get_headers())
 		local req_method = req_headers:get(":method")
 

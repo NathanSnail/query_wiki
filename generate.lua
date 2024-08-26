@@ -1,5 +1,6 @@
 local lfs = require("lfs")
 local nxml = require("luanxml.nxml")
+local defaults = require("meta.defaults")
 nxml.error_handler = function(_, _) end
 ---@type util
 local util = require("util")
@@ -117,6 +118,7 @@ function generator:get_entity_xml(path)
 	end, function(x)
 		return self:exists(x)
 	end)
+	tree:apply_defaults(defaults)
 	self.entity_cache[path] = tree
 	return tree
 end
