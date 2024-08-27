@@ -1,4 +1,5 @@
 local M = {}
+package.path = package.path .. ";" .. "/home/nathan/Documents/code/noitadata/data/" .. "?.lua;" 
 local _print = print
 require("meta.api")
 print = _print
