@@ -1,36 +1,18 @@
+---@diagnostic disable: need-check-nil
 ---@param qm query_manager
 ---@param gen generator
 local function builtin(qm, gen)
 	qm:add_col("name", function(path)
-		local ex = gen:get_entity_xml(path)
-		if ex then
-			return ex:get("name")
-		end
-	end)
-	qm:add_col("dmc", function(path)
-		local ex = gen:get_entity_xml(path)
-		if ex then
-			return ex:first_of("DamageModelComponent")
-		end
+		local xml = gen:get_entity_xml(path)
+		return xml:get("name")
 	end)
 	qm:add_col("comp", function(path, comp)
-		local ex = gen:get_entity_xml(path)
-		if ex then
-			return ex:first_of(comp)
-		end
+		local xml = gen:get_entity_xml(path)
+		return xml:first_of(comp)
 	end)
 	qm:add_col("field", function(path, comp, field)
-		local ex = qm:get("comp", path, comp)
-		if ex then
-			return ex:get(field)
-		end
-	end)
-	qm:add_col("hp", function(path)
-		---@type element?
-		local elem = qm:get("dmc", path)
-		if elem then
-			return elem:get("hp")
-		end
+		local xml = qm:get("comp", path, comp)
+		return xml:get(field)
 	end)
 end
 

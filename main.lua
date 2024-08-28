@@ -12,25 +12,36 @@ if false then
 	end)()
 	print(thread:get(1000, "ms"))
 end
-local gen = require("generate")("/home/nathan/Documents/code/noitadata/")
+
 local qm = require("query")
+local gen = require("generate")("/home/nathan/Documents/code/noitadata/", qm)
+
 local builtin = require("builtin")
 builtin(qm, gen)
 
+---@diagnostic disable-next-line: unused-local
 local deck_files = qm.filter(gen.files, function(el)
 	local contains = string.find(el, "deck") ~= nil
 	return contains
 end)
 
 print(qm:get("name", "data/entities/animals/longleg.xml"))
-print(qm:get("hp", "data/entities/animals/longleg.xml"))
 
-print(qm.filter(deck_files, function(el)
+--[[print(qm.filter(deck_files, function(el)
 	local dmg = qm:get("field", el, "ProjectileComponent", "damage")
-	if dmg then
-		return tonumber(dmg) > 0
-	end
-end))
+	return tonumber(dmg) > 0
+end))]]
+
+gen.spell_collection
+	:filter(function(card)
+		---@cast card expanded_action
+		local begun = card.begun_projectiles[1]
+		return tonumber(qm:get("field", begun, "ProjectileComponent", "damage")) > 1
+	end)
+	:map(function(v)
+		return v.id
+	end)
+	:print()
 
 local function runserver()
 	local socket = require("cqueues.socket")

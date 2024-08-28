@@ -11,12 +11,14 @@ local util = require("util")
 
 ---@class generator
 local generator = {
-	---@type expanded_action[]
-	root = {},
-	---@type string[]
+	---@type string
+	root = "",
+	---@type collection
 	files = {},
 	---@type table<string, expanded_action>
 	spells = {},
+	---@type collection
+	spell_collection = {},
 	---@type table<string, string>
 	file_cache = {},
 	---@type table<string, element>
@@ -137,8 +139,8 @@ function generator:get_entity_xml(path)
 	return tree
 end
 
----@param callback fun(): ...
----@return ... any
+---@param callback fun(): ... any
+---@return ...
 local function no_globals(callback)
 	local __G = {}
 	for k, v in pairs(_G) do
@@ -162,7 +164,7 @@ function generator:gen_spells()
 		require("fake_engine")
 		dofile("data/scripts/gun/gun.lua")
 		local registered = {}
-		function BeginProjectile(entity_filename)
+		function Reflection_RegisterProjectile(entity_filename)
 			table.insert(registered, entity_filename)
 		end
 		---@diagnostic disable-next-line: lowercase-global
@@ -191,12 +193,23 @@ function generator:gen_spells()
 	end
 end
 
-return function(root)
+---@param root string
+---@param qm query_manager
+---@return generator
+local function construct(root, qm)
 	if root:sub(#root) ~= "/" then
 		root = root .. "/"
 	end
 	generator.root = root
 	generator:scan_fs()
 	generator:gen_spells()
+	local spell_collection = {}
+	for _, v in pairs(generator.spells) do
+		table.insert(spell_collection, v)
+	end
+	generator.spell_collection = qm.construct_collection(spell_collection)
+	generator.files = qm.construct_collection(generator.files)
 	return generator
 end
+
+return construct
