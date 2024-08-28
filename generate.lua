@@ -5,12 +5,18 @@ nxml.error_handler = function(_, _) end
 ---@type util
 local util = require("util")
 
+---@class (exact) expanded_action: action
+---@field shot_state table<string, any>
+---@field begun_projectiles string[]
+
 ---@class generator
 local generator = {
-	---@type string
-	root = "",
+	---@type expanded_action[]
+	root = {},
 	---@type string[]
 	files = {},
+	---@type table<string, expanded_action>
+	spells = {},
 	---@type table<string, string>
 	file_cache = {},
 	---@type table<string, element>
@@ -131,11 +137,66 @@ function generator:get_entity_xml(path)
 	return tree
 end
 
+---@param callback fun(): ...
+---@return ... any
+local function no_globals(callback)
+	local __G = {}
+	for k, v in pairs(_G) do
+		__G[k] = v
+	end
+	local res = { callback() }
+	for k, v in __G.pairs(_G) do
+		if v ~= _G then
+			_G[k] = nil
+		end
+	end
+	for k, v in __G.pairs(__G) do
+		_G[k] = v
+	end
+	return unpack(res)
+end
+
+function generator:gen_spells()
+	---@type expanded_action[]
+	local acts = no_globals(function()
+		require("fake_engine")
+		dofile("data/scripts/gun/gun.lua")
+		local registered = {}
+		function BeginProjectile(entity_filename)
+			table.insert(registered, entity_filename)
+		end
+		---@diagnostic disable-next-line: lowercase-global
+		reflecting = true
+		---@diagnostic disable-next-line: undefined-global
+		ConfigGunShotEffects_Init(shot_effects)
+		---@diagnostic disable-next-line: undefined-global
+		for _, action in ipairs(actions) do
+			---@cast action expanded_action
+			current_reload_time = 0
+			local shot = create_shot(0)
+			c = shot.state
+			set_current_action(action)
+			action.action()
+			action.shot_state = c
+			action.begun_projectiles = registered
+			registered = {}
+		end
+		---@diagnostic disable-next-line: lowercase-global
+		reflecting = false
+		---@diagnostic disable-next-line: undefined-global
+		return actions
+	end)
+	for _, v in ipairs(acts) do
+		self.spells[v.id] = v
+	end
+end
+
 return function(root)
 	if root:sub(#root) ~= "/" then
 		root = root .. "/"
 	end
 	generator.root = root
 	generator:scan_fs()
+	generator:gen_spells()
 	return generator
 end
