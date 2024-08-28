@@ -1,5 +1,8 @@
-local M = {}
-package.path = package.path .. ";" .. "/home/nathan/Documents/code/noitadata/data/" .. "?.lua;" 
+--TODO: move fake_engine out of eval tree and into something more general
+local data_path = "/home/nathan/Documents/code/noitadata/"
+local mods_path = "/home/nathan/.local/share/Steam/steamapps/common/Noita/"
+local vfs = {}
+package.path = package.path .. ";" .. data_path .. "?.lua;" .. mods_path .. "?.lua"
 local _print = print
 require("meta.api")
 print = _print
@@ -26,13 +29,13 @@ end
 
 function ModTextFileGetContent(filename)
 	local success, res = pcall(function()
-		if M.vfs[filename] then
-			return M.vfs[filename]
+		if vfs[filename] then
+			return vfs[filename]
 		end
 		if filename:sub(1, 4) == "mods" then
-			return assert(assert(io.open(M.mods_path .. filename)):read("*a"))
+			return assert(assert(io.open(mods_path .. filename)):read("*a"))
 		end
-		return assert(assert(io.open(M.data_path .. filename)):read("*a"))
+		return assert(assert(io.open(data_path .. filename)):read("*a"))
 	end)
 	if not success then
 		return ""
@@ -41,7 +44,7 @@ function ModTextFileGetContent(filename)
 end
 
 function ModTextFileSetContent(filename, new_content)
-	M.vfs[filename] = new_content
+	vfs[filename] = new_content
 end
 
 function GlobalsGetValue(key, value)
@@ -69,4 +72,3 @@ function dofile(file)
 	return unpack(res)
 end
 dofile_once = dofile
-return M
