@@ -79,6 +79,15 @@ gen.spell_collection
 	end)
 	:print("bad vsc")
 
+gen.spell_collection
+	:filter(function(val)
+		return val.ai_never_uses
+	end)
+	:map(function(val)
+		return val.id
+	end)
+	:print("never ai")
+
 local function runserver()
 	local socket = require("cqueues.socket")
 	local http_headers = require("http.headers")
