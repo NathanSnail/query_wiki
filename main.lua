@@ -34,7 +34,6 @@ end))]]
 
 gen.spell_collection
 	:filter(function(card)
-		---@cast card expanded_action
 		local begun = card.begun_projectiles[1]
 		return tonumber(qm:get("field", begun, "ProjectileComponent", "damage")) > 1
 	end)
@@ -42,6 +41,43 @@ gen.spell_collection
 		return v.id
 	end)
 	:print()
+
+gen.spell_collection
+	:filter(function(card)
+		return card.shot_state.damage_projectile_add > 1
+	end)
+	:map(function(v)
+		return v.id
+	end)
+	:print()
+
+gen.spell_collection
+	:filter(function(val)
+		local b = val.begun_projectiles[1]
+		for _, v in ipairs(val.begun_projectiles) do
+			if v ~= b then
+				return true
+			end
+		end
+		return val.begun_projectiles[1] ~= val.related_projectiles[1]
+	end)
+	:map(function(val)
+		return val.id
+	end)
+	:print("dodgy related proj")
+
+gen.spell_collection
+	:filter(function(val)
+		for v in gen:get_entity_xml(val.begun_projectiles[1]):each_of("VariableStorageComponent") do
+			if v:get("name") == "projectile_file" then
+				return v:get("value_string") ~= val.begun_projectiles[1]
+			end
+		end
+	end)
+	:map(function(val)
+		return val.id
+	end)
+	:print("bad vsc")
 
 local function runserver()
 	local socket = require("cqueues.socket")

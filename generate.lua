@@ -13,11 +13,11 @@ local util = require("util")
 local generator = {
 	---@type string
 	root = "",
-	---@type collection
+	---@type collection<string>
 	files = {},
 	---@type table<string, expanded_action>
 	spells = {},
-	---@type collection
+	---@type collection<expanded_action>
 	spell_collection = {},
 	---@type table<string, string>
 	file_cache = {},
