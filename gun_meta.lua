@@ -28,6 +28,7 @@
 ---@field mana number?
 ---@field sprite_unidentified string?
 ---@field deck_index integer
+---@field related_projectiles (string|integer)[]?
 
 ---@alias state table<string, any>
 

@@ -57,17 +57,17 @@ function query_manager.map(collection, new)
 	return out
 end
 
----@class collection
+---@class collection<T>: {[integer]: T, filter: (fun(self: collection<T>, filter: fun(val: T): boolean?): collection<T>), map: (fun(self: collection<T>, new: fun(val: T): any): collection<any>), print: fun(self: collection<T>, prefix: ...?)}
+---@type collection<any>
 local collection_funcs = {
 	filter = query_manager.filter,
 	map = query_manager.map,
-	print = print,
-	get = function(self)
-		local v = {}
-		for _, elem in ipairs(self) do
-			table.insert(v, query_manager:get(elem, v))
+	print = function(self, ...)
+		if ... ~= nil then
+			print(..., self)
+			return
 		end
-		return query_manager.construct_collection(v)
+		print(self)
 	end,
 }
 
