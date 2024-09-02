@@ -1,4 +1,6 @@
 require("luarocks.loader")
+local p = require("parse")
+p:tokenise("|")
 ---@class util
 local util = require("util")
 --TODO: this should allow us to make user queries have a timeout
@@ -87,6 +89,17 @@ gen.spell_collection
 		return val.id
 	end)
 	:print("never ai")
+
+gen.spell_collection
+	:filter(function(val)
+		return gen:get_entity_xml(val.begun_projectiles[1])
+			:first_of("ProjectileComponent")
+			:get("damage_scaled_by_speed") == "1"
+	end)
+	:map(function(val)
+		return val.id
+	end)
+	:print("speed based damage")
 
 local function runserver()
 	local socket = require("cqueues.socket")

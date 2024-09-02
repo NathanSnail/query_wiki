@@ -19,4 +19,81 @@ ex gets entity xml of path
 num converts input to num
 
 ]]
+
+---@class (exact) QLiteralStr
+---@field tag "QLiteralStr"
+---@field value string
+
+---@class (exact) QLiteralNum
+---@field tag "QLiteralNum"
+---@field value number
+
+---@class (exact) QText
+---@field tag "QText"
+---@field value string
+
+---@alias QToken "|" | ":" | ";" | "(" | ")" | ">" | ">=" | "<" | "<=" | "=" | QLiteralNum | QLiteralStr | QText
+
+---@param src string
+---@return QToken[]
+function M:tokenise(src)
+	---@type QToken[]
+	local tokens = {}
+	local ptr = 1
+	local function n()
+		ptr = ptr + 1
+	end
+	---@param val QToken
+	local function a(val)
+		table.insert(tokens, val)
+	end
+	while ptr <= #src do
+		local cur = src:sub(ptr, ptr);
+		({
+			["|"] = function()
+				a("|")
+				n()
+			end,
+			[":"] = function()
+				a(":")
+				n()
+			end,
+			[";"] = function()
+				a(";")
+				n()
+			end,
+			["("] = function()
+				a("(")
+				n()
+			end,
+			[")"] = function()
+				a(")")
+				n()
+			end,
+			[">"] = function()
+				if src:sub(ptr + 1, ptr + 1) == "=" then
+					a(">=")
+					n()
+				else
+					a(">")
+				end
+				n()
+			end,
+			["<"] = function()
+				if src:sub(ptr + 1, ptr + 1) == "=" then
+					a(">=")
+					n()
+				else
+					a(">")
+				end
+				n()
+			end,
+			["="] = function()
+				a("=")
+				n()
+			end,
+		})[cur]()
+	end
+	return tokens
+end
 return M
