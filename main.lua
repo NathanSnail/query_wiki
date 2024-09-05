@@ -101,6 +101,28 @@ gen.spell_collection
 	end)
 	:print("speed based damage")
 
+gen.spell_collection
+	:filter(function(v)
+		local x = gen:get_entity_xml(v.begun_projectiles[1])
+		if x then
+			local pc = x:first_of("ProjectileComponent")
+			if not pc then
+				return true
+			end
+		end
+		x = gen:get_entity_xml(v.related_projectiles[1])
+		if x then
+			local pc = x:first_of("ProjectileComponent")
+			if not pc then
+				return true
+			end
+		end
+	end)
+	:map(function(v)
+		return v.id
+	end)
+	:print("bad tree")
+
 local function runserver()
 	local socket = require("cqueues.socket")
 	local http_headers = require("http.headers")

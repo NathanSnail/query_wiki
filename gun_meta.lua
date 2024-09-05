@@ -7,6 +7,8 @@
 ---@field state state
 ---@field num_of_cards_to_draw integer
 
+---@class (exact) related_projectiles: {[1]: string, [2]: integer?}
+
 ---@class action
 ---@field action fun(recursion: integer?, iter: integer?): integer?
 ---@field id string
@@ -28,7 +30,7 @@
 ---@field mana number?
 ---@field sprite_unidentified string?
 ---@field deck_index integer
----@field related_projectiles (string|integer)[]?
+---@field related_projectiles related_projectiles
 
 ---@alias state table<string, any>
 

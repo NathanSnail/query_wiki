@@ -4,7 +4,7 @@ local util = {}
 ---@generic T
 ---@param src T
 ---@param cache table<{}, {}>
----@return any
+---@return T
 local function internal_deep_copy(src, cache)
 	if type(src) == "table" then
 		if cache[src] then
