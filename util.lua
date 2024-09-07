@@ -6,19 +6,19 @@ local util = {}
 ---@param cache table<{}, {}>
 ---@return T
 local function internal_deep_copy(src, cache)
-	if type(src) == "table" then
-		if cache[src] then
-			return cache[src]
-		end
-		local mt = getmetatable(src)
-		local new = setmetatable({}, mt)
-		cache[src] = new
-		for k, _ in pairs(src) do -- maybe an issue with pairs idk
-			rawset(new, k, internal_deep_copy(rawget(src, k), cache))
-		end
-		return new
+	if type(src) ~= "table" then
+		return src
 	end
-	return src
+	if cache[src] then
+		return cache[src]
+	end
+	local mt = getmetatable(src)
+	local new = setmetatable({}, mt)
+	cache[src] = new
+	for k, _ in pairs(src) do -- maybe an issue with pairs idk
+		rawset(new, k, internal_deep_copy(rawget(src, k), cache))
+	end
+	return new
 end
 
 ---@generic T
