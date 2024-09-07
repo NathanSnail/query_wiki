@@ -123,6 +123,17 @@ gen.spell_collection
 	end)
 	:print("bad tree")
 
+gen.spell_collection
+	:filter(function(val)
+		return val.shot_effects.recoil_knockback ~= 0
+	end)
+	:sort(function(a, b)
+		return a.shot_effects.recoil_knockback > b.shot_effects.recoil_knockback
+	end)
+	:map(function(val)
+		return val.id .. " " .. val.shot_effects.recoil_knockback
+	end)
+	:print("recoil")
 local function runserver()
 	local socket = require("cqueues.socket")
 	local http_headers = require("http.headers")

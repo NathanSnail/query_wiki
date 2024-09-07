@@ -8,6 +8,7 @@ local util = require("util")
 ---@class (exact) expanded_action: action
 ---@field shot_state table<string, any>
 ---@field begun_projectiles string[]
+---@field shot_effects table<string, any>
 
 ---@class generator
 local generator = {
@@ -175,11 +176,13 @@ function generator:gen_spells()
 		for _, action in ipairs(actions) do
 			---@cast action expanded_action
 			current_reload_time = 0
+			shot_effects = { recoil_knockback = 0 }
 			local shot = create_shot(0)
 			c = shot.state
 			set_current_action(action)
 			action.action()
 			action.shot_state = c
+			action.shot_effects = shot_effects
 			action.begun_projectiles = registered
 			registered = {}
 		end
